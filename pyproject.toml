@@ -12,6 +12,7 @@ python = ">=3.13,<3.14"
 fastapi = "^0.115"
 uvicorn = "^0.34"
 python-vlc = "^3.0"
+poetry = ">=0.12"
 
 [tool.poetry.group.dev.dependencies]
 black = "^25"
