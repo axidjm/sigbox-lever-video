@@ -8,17 +8,20 @@ import vlc
 from fastapi import FastAPI
 
 
+version = '1.0'
 app = FastAPI()
 levers = []
-for x in range(0,16):
+for x in range(0,17):
     levers.append('N')
 
 @app.get("/")
 async def root():
-    for x in range(1,16):
+    messages =  {"message": "sigbox-lever-video", "version": version}
+    for x in range(1,17):
         if levers[x] != 'N':
             print(f"lever {x} is {levers[x]}")
-    return {"message": "sigbox-lever-video"}
+            messages[x] = levers[x]
+    return messages
 
 
 @app.get("/lever/{lever_id}/{state}")
@@ -29,7 +32,16 @@ async def handle_lever(lever_id: int, state):
     match lever_id:
         case 1:
             if state == "R":
-                await play_sound("3-Stopping local-L-R.mp3")
+                if levers[15] == 'R':
+                    await play_sound("3-Stopping local-L-R.mp3")
+                else:
+                    await play_video("Down-Mineral.mp4")
+                
+        case 12:
+            if state == "N":
+                await play_video("Signal-12-replaced.mp4")
+            else:
+                await play_video("Signal-12-cleared.mp4")
 
         case 13:
             if state == "R":
@@ -73,7 +85,7 @@ async def debug_sound(lever_id: int, state):
     
     time.sleep(0.1)
     while player.is_playing():
-        time.sleep(0.1)
+        time.sleep(0.01)
     
     match state:
         case 'N':
