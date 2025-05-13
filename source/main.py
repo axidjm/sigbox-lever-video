@@ -7,18 +7,25 @@ import uvicorn
 import vlc
 from fastapi import FastAPI
 
-app = FastAPI()
-# splash = "Lowdham in 1956 Malcolm Fletcher.jpg"
 
+app = FastAPI()
+levers = []
+for x in range(0,16):
+    levers.append('N')
 
 @app.get("/")
 async def root():
+    for x in range(1,16):
+        if levers[x] != 'N':
+            print(f"lever {x} is {levers[x]}")
     return {"message": "sigbox-lever-video"}
 
 
 @app.get("/lever/{lever_id}/{state}")
 async def handle_lever(lever_id: int, state):
-    print("lever_id: ", lever_id, ", state: ", state)
+    await debug_sound(lever_id, state)
+    levers[lever_id] = state
+    
     match lever_id:
         case 1:
             if state == "R":
@@ -29,7 +36,7 @@ async def handle_lever(lever_id: int, state):
                 await play_sound("4-Steam train non-stop R-L.mp3")
 
         case 14:
-            if state == "R":
+            if state == "N":
                 await play_video("1-Gates-opening.mp4")
             else:
                 await play_video("2-Gates-closing.mp4")
@@ -57,6 +64,31 @@ async def play_video(filename: str):
             return
 
 
+async def debug_sound(lever_id: int, state):
+    print("lever_id: ", lever_id, ", state: ", state)
+    pathname = f"c:/sigbox/debug sounds/lever {lever_id}.m4a"
+    # print("playing " + pathname)
+    player = vlc.MediaPlayer(pathname)
+    player.play()
+    
+    time.sleep(0.1)
+    while player.is_playing():
+        time.sleep(0.1)
+    
+    match state:
+        case 'N':
+            pathname = "c:/sigbox/debug sounds/Normal.m4a"
+            
+        case 'R':
+            pathname = "c:/sigbox/debug sounds/Reversed.m4a"
+            
+        case _:
+            return
+    
+    # print("playing " + pathname)
+    player = vlc.MediaPlayer(pathname)
+    player.play()
+    
 async def play_sound(filename: str):
     pathname = f"c:/sigbox/sounds/{filename}"
     print("playing " + pathname)
@@ -65,5 +97,7 @@ async def play_sound(filename: str):
 
 
 if __name__ == "__main__":
+    # splash = "Lowdham in 1956 Malcolm Fletcher.jpg"
+
     multiprocessing.freeze_support()  # For Windows support
     uvicorn.run(app, host="0.0.0.0", port=8000, reload=False, workers=1)
