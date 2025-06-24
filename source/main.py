@@ -20,21 +20,25 @@ async def root():
     for x in range(1,17):
         if levers[x] != 'N':
             print(f"lever {x} is {levers[x]}")
-            messages[x] = levers[x]
+            messages[str(x)] = levers[x]
     return messages
 
 
-@app.get("/lever/{lever_id}/{state}")
+@app.put("/lever/{lever_id}/{state}")
 async def handle_lever(lever_id: int, state):
-    await debug_sound(lever_id, state)
+    # await debug_sound(lever_id, state)
     levers[lever_id] = state
     
     match lever_id:
         case 1:
             if state == "R":
+                time.sleep(8)
+                # Switch to Green wire: Stopping passenger
+                # Switch to Brown wire: Mineral train
+                # Switch central: No effects
                 if levers[15] == 'R':
-                    await play_sound("3-Stopping local-L-R.mp3")
-                else:
+                    await play_video("Down-Stopping-Local.mp4")
+                elif levers[16] == 'R':
                     await play_video("Down-Mineral.mp4")
                 
         case 12:
@@ -45,7 +49,14 @@ async def handle_lever(lever_id: int, state):
 
         case 13:
             if state == "R":
-                await play_sound("4-Steam train non-stop R-L.mp3")
+                time.sleep(8)
+                # Switch to Green wire: Stopping passenger
+                # Switch to Brown wire: Mineral train
+                # Switch central: No effects
+                if levers[15] == 'R':
+                    await play_video("Up-Stopping-Local.mp4")
+                elif levers[16] == 'R':
+                    await play_video("Up-Mineral.mp4")
 
         case 14:
             if state == "N":
