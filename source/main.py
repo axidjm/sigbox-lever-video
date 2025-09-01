@@ -57,6 +57,12 @@ async def handle_lever(lever_id: int, state):
                     await play_video("Up-Stopping-Local.mp4")
                 elif levers[16] == 'R':
                     await play_video("Up-Mineral.mp4")
+                    
+        case 4 | 8 | 10:
+            if state == "N":
+                await play_video("Points and Ground Signal 2.mp4")
+            else:
+                await play_video("Points and Ground Signal 1.mp4")
 
         case 14:
             if state == "N":
