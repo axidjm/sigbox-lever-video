@@ -1,27 +1,30 @@
-[tool.poetry]
+[project]
 name = "sigbox-lever-video"
 version = "0.1.0"
 description = ""
 authors = ["Lowdham Railway Heritage"]
 package-mode = false
+requires-python = ">=3.13,<3.14"
 
-[tool.poetry.dependencies]
-python = ">=3.13,<3.14"
-# In some projects, this fails with a virus false positive
-#pyinstaller = "^6.7"
-fastapi = "^0.115"
-uvicorn = "^0.34"
-python-vlc = "^3.0"
-poetry = ">=0.12"
+dependencies = [
+    "pyinstaller >= 6.15, < 7",
+    "pytz >= 2025.1",
+    "types-pytz >= 2025.2",
+    "python-dotenv >= 1.1",
+	"fastapi >= 0.116",
+	"uvicorn >=0.35",
+	"python-vlc >=3.0",
+]
 
-[tool.poetry.group.dev.dependencies]
-black = "^25"
-mypy = "^1.14"
-pre-commit = "^4"
-psutil = "^6.1"
-isort = "^6"
-bump2version = "^1.0"
-setuptools = "^70"
+[project.optional-dependencies]
+dev = [
+    "black >= 25.1, < 26",
+    "mypy >= 1.14, < 2",
+    "pre-commit >= 4.1, < 5",
+    "psutil >= 6.1, < 7",
+    "isort >= 6.0, < 7",
+    "bump2version >= 1.0, < 2",
+]
 
 [tool.black]
 line_length = 98
@@ -37,6 +40,6 @@ line_length = 98
 include = ['./source/*']
 exclude_lines = ["if __name__ == .__main__.:"]
 
-[build-system]
-requires = ["poetry>=0.12"]
-build-backend = "poetry.masonry.api"
+#[build-system]
+#requires = ["poetry>=0.12"]
+#build-backend = "poetry.masonry.api"
